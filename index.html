@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main page</title>
+    <style>
+        *{
+            margin: 0%;
+        }
+        nav{
+            background-color: aqua;
+            display: flex;
+            justify-content: space-evenly;
+            height: 70px;
+            align-items: center;
+        }
+        nav>a{
+            text-decoration: none;
+        }
+
+        select{
+            height: 10%;
+            width: 40%;
+            margin-left: 30%;
+            margin-top: 1%;
+        }
+
+        #container{
+            display: grid;
+            grid-template-columns: repeat(1,1fr);
+            width: 80%;
+            height: 3%;
+            margin: auto;
+            
+            
+        }
+        #container>div{
+           border: 1px solid wheat;
+            
+        }
+
+        #container>div>li{
+            float: left;
+            padding: 10px;
+            list-style: none;
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">Main Page</a>
+        <a href="SearchPage.html">Search Page</a>
+    </nav>
+
+    <select name="brewary" id="brewary" onchange="search()">
+        <option value="selectBy">Select BY Type</option>
+        <option value="micro">micro</option>
+        <option value="nano">nano</option>
+        <option value="regional">regional</option>
+        <option value="brewpub">brewpub</option>
+        <option value="large">large</option>
+        <option value="planning">planning</option>
+        <option value="bar">bar</option>
+        <option value="contract">contract</option>
+        <option value="proprietor">proprietor</option>
+        <option value="closed">closed</option>
+    </select>
+
+    <div id="container">
+
+    </div>
+</body>
+
+<script>
+    
+    
+    
+    const search= async ()=>{
+        try {
+            const brewary=document.getElementById("brewary").value;
+            console.log(brewary);
+            const url=`https://api.openbrewerydb.org/breweries?by_type=${brewary}`;
+            let res=await fetch(url);
+            let data =await res.json();
+            console.log(data)
+            displayData(data);
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    const displayData=(data)=>{
+        const container=document.getElementById("container");
+            container.innerText=" ";
+        data.forEach(data => {
+            
+
+            const brewarybox=document.createElement("div");
+            const brewaryname=document.createElement("li");
+            brewaryname.innerText="name : " +data.name;
+            const brewery_type=document.createElement("li");
+            brewery_type.innerText= "brewery_type : " +data.brewery_type;
+            const brewarycity=document.createElement("li");
+            brewarycity.innerText= "city : " + data.city;
+            const brewarystate=document.createElement("li");
+            brewarystate.innerText= "state : " +data.state;
+
+            const button=document.createElement("button")
+            button.innerText="MORE DETAILS";
+
+            button.onclick=()=>{
+                localStorage.setItem("brewaryDataId" , JSON.stringify(data.id));
+                location.href="IndividualBreweryPage.html";
+            }
+
+            brewarybox.append(brewaryname,brewery_type,brewarycity,brewarystate,button);
+
+            container.append(brewarybox);
+
+        });
+    }
+
+
+
+</script>
+</html>

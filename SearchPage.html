@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    <style>
+        * {
+            margin: 0%;
+        }
+
+        nav {
+            background-color: aqua;
+            display: flex;
+            justify-content: space-evenly;
+            height: 70px;
+            align-items: center;
+        }
+
+        nav>a {
+            text-decoration: none;
+        }
+
+        .container {
+            width: 100%;
+            display: grid;
+            margin-top: 50px;
+        }
+
+        #search {
+
+            width: 80%;
+            margin: auto;
+        }
+
+        #container{
+            display: grid;
+            grid-template-columns: repeat(1,1fr);
+            width: 80%;
+            height: 3%;
+            margin: auto;
+            
+            
+        }
+        #container>div{
+           border: 1px solid wheat;
+            
+        }
+
+        #container>div>li{
+            float: left;
+            padding: 10px;
+            list-style: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="index.html">Main Page</a>
+        <a href="SearchPage.html">Search Page</a>
+    </nav>
+
+    <div class="container">
+        <input type="text" placeholder="Search" id="search" oninput="debounce(main,1000)">
+    </div>
+
+    <div id="container">
+
+    </div>
+</body>
+
+<script>
+
+
+    async function main() {
+        try {
+            let data = await search();
+            if (!data) {
+                return false;
+            }
+            displayData(data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    const search = async () => {
+        try {
+            const search = document.getElementById("search").value;
+            console.log(search)
+            const url = `https://api.openbrewerydb.org/breweries?by_name=${search}`;
+            let res = await fetch(url);
+            let data = await res.json();
+            console.log(data)
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+    let timerid;
+    function debounce(func, delay) {
+        if (timerid) {
+            clearTimeout(timerid);
+        }
+        timerid = setTimeout(function () {
+            func();
+        }, 1000)
+    }
+
+    const displayData = (data) => {
+        const container = document.getElementById("container");
+        container.innerText = " ";
+        data.forEach(data => {
+
+
+            const brewarybox = document.createElement("div");
+            const brewaryname = document.createElement("li");
+            brewaryname.innerText = "name : " + data.name;
+            const brewery_type = document.createElement("li");
+            brewery_type.innerText = "brewery_type : " + data.brewery_type;
+            const brewarycity = document.createElement("li");
+            brewarycity.innerText = "city : " + data.city;
+            const brewarystate = document.createElement("li");
+            brewarystate.innerText = "state : " + data.state;
+
+            const button = document.createElement("button")
+            button.innerText = "MORE DETAILS";
+
+            button.onclick = () => {
+                localStorage.setItem("brewaryDataId", JSON.stringify(data.id));
+                location.href = "IndividualBreweryPage.html";
+            }
+
+            brewarybox.append(brewaryname, brewery_type, brewarycity, brewarystate, button);
+
+            container.append(brewarybox);
+
+        });
+    }
+
+</script>
+
+</html>

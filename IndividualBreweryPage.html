@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inividual Brewary page</title>
+    <style>
+        * {
+            margin: 0%;
+        }
+
+        nav {
+            background-color: aqua;
+            display: flex;
+            justify-content: space-evenly;
+            height: 70px;
+            align-items: center;
+        }
+
+        nav>a {
+            text-decoration: none;
+        }
+        #dataDisplay{
+            display: grid;
+            width: 100%;
+            margin: auto;
+        }
+        #dataDisplay >div{
+            display: grid;
+            width: 100%;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="index.html">Main Page</a>
+        <a href="SearchPage.html">Search Page</a>
+    </nav>
+    <div id="dataDisplay">
+
+    </div>
+</body>
+
+<script>
+    const brewaryId = localStorage.getItem("brewaryDataId") ? JSON.parse(localStorage.getItem("brewaryDataId")) : "";
+    const search = async () => {
+        try {
+
+            const url = `https://api.openbrewerydb.org/breweries/${brewaryId}`;
+            let res = await fetch(url);
+            let data = await res.json();
+            console.log(data)
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    let data = search();
+    data.then(function (res) {
+        var data = res
+        console.log(data);
+        const dataDisplay = document.getElementById("dataDisplay");
+
+        const brewarybox = document.createElement("div")
+        const brewaryname = document.createElement("li");
+        brewaryname.innerText = "name : " + data.name;
+        const brewery_type = document.createElement("li");
+        brewery_type.innerText = "brewery_type : " + data.brewery_type;
+        const brewarycity = document.createElement("li");
+        brewarycity.innerText = "city : " + data.city;
+        const brewarystate = document.createElement("li");
+        brewarystate.innerText = "state : " + data.state;
+
+        brewarybox.append(brewaryname, brewery_type, brewarycity, brewarystate);
+        dataDisplay.append(brewarybox);
+    })
+
+
+
+</script>
+
+</html>
